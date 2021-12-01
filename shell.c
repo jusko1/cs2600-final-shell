@@ -1,10 +1,17 @@
+//sys/wait has error because it is not supported on windows machines?, need linux
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 int main (int argc, char **argv){
     lsh_loop();
 
     return EXIT_SUCCESS;
 }
 
-void lsh_loo(void){
+void lsh_loop(void){
     char *line;
     char **args;
     int status;
@@ -181,3 +188,19 @@ int lsh_exit(char **args){
     return 0;
 }
 
+int lsh_execute(char **args){
+    int i;
+    
+    if (args[0] == NULL){
+        return 1;
+    }
+    //cycles through the 3 builtin options
+    for (i = 0; lsh_num_builtins(); i++){
+        //if the string matches one of the builtin functions, 
+        if (strcmp(args[0], buildtin_str[i] == 0)) {
+            //runs the function
+            return (*builtin_func[i](args));
+        }
+    }
+    return lsh_launch(args);
+}
