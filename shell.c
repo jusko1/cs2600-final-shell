@@ -64,7 +64,7 @@ int lsh_cd(char **args){
     // if there is an argument, calls chdir()
     else {
         // if there is an error, returns an error
-        if (chdir(args[1]) != 0)){
+        if (chdir(args[1]) != 0){
             perror("lsh");
         }
     }
@@ -98,7 +98,7 @@ int lsh_execute(char **args){
     //cycles through the 3 builtin options
     for (i = 0; i < lsh_num_builtins(); i++){
         //if the string matches one of the builtin functions, 
-        if (strcmp(args[0], builtin_str[i]) == 0)) {
+        if (strcmp(args[0], builtin_str[i]) == 0) {
             //runs the function
             return (*builtin_func[i])(args);
         }
@@ -118,7 +118,6 @@ char *lsh_read_line(void)
         fprintf(stderr, "lsh: allocatin error\n");
         exit(EXIT_FAILURE);
     }
-
     while (1){
         c = getchar();
 
@@ -133,14 +132,13 @@ char *lsh_read_line(void)
             buffer[position] = c;
         }
         position++;
-
         //If the line takes up more space in memory than was allocated by the system, 
         // reallocate memory and loop back. If no such buffer exists, exit with error
         if (position>=bufsize) {
             bufsize += LSH_RL_BUFSIZE;
             buffer = realloc(buffer, bufsize);
             if(!buffer){
-                fprint(stderr, "lsh: allocation error \n");
+                fprintf(stderr, "lsh: allocation error \n");
                 exit(EXIT_FAILURE);
             }
         }
