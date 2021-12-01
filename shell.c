@@ -54,7 +54,7 @@ char *lsh_read_line(void)
         else {
             buffer[position] = c;
         }
-        position ++;
+        position++;
 
         //If the line takes up more space in memory than was allocated by the system, 
         // reallocate memory and loop back. If no such buffer exists, exit with error
@@ -69,13 +69,12 @@ char *lsh_read_line(void)
     }
 }
 #define LSH_TOK_BUFSIZE 64
-#define LSH_TOK_DELIM "\t\r\n\a"
+#define LSH_TOK_DELIM " \t\r\n\a"
 //splits the line into a list of arguments using whitespace as delimiters
 char **lsh_split_line(char *line){
     int bufsize = LSH_TOK_BUFSIZE, position = 0;
     char **tokens = malloc(bufsize * sizeof(char*));
     char *token;
-
 
     if (!tokens){
         fprintf(stderr, "lsh: allocation error\n");
@@ -88,7 +87,7 @@ char **lsh_split_line(char *line){
         position++;
         // if the memory allocated is not enough, reallocate more memory
         if (position >= bufsize){
-            bufsize += LSH_TOCK-BUFSIZE;
+            bufsize += LSH_TOK_BUFSIZE;
             tokens = realloc(token, bufsize * sizeof(char*));
             if (!tokens) {
                 //if memory reallocation fails, prints error and exits.
@@ -126,7 +125,6 @@ int lsh_launch(char **args){
     else {
         do {
             wpid = waitpid(pid, &status, WUNTRACED);
-        
         }
         while (!WIFEXITED(status) && !WIFSIGNALLED(status));
     }
@@ -182,6 +180,8 @@ int lsh_help(char **args){
         printf(" %s\n", builtin_str[i]);
     }
 
+    printf("Use the man command for information on other programs.\n");
+    return 1;
 }
 //exiting the shell
 int lsh_exit(char **args){
@@ -195,9 +195,9 @@ int lsh_execute(char **args){
         return 1;
     }
     //cycles through the 3 builtin options
-    for (i = 0; lsh_num_builtins(); i++){
+    for (i = 0; i < lsh_num_builtins(); i++){
         //if the string matches one of the builtin functions, 
-        if (strcmp(args[0], buildtin_str[i] == 0)) {
+        if (strcmp(args[0], builtin_str[i] == 0)) {
             //runs the function
             return (*builtin_func[i](args));
         }
