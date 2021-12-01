@@ -97,17 +97,22 @@ char **lsh_split_line(char *line){
     //returns an array of tokens
     return tokens;
 }
+
+//takes the arguments from the split() method 
 int lsh_launch(char **args){
     pid_t pid, wpid;
     int status;
 
     pid = fork();
     if (pid == 0) {
-        if (execvp(args[0], args ) == -1){
+        //takes in a program  name and an array
+        //if it returns, there was an error
+        if (execvp(args[0], args) == -1){
             perror("lsh");
         }
         exit(EXIT_FAILURE);
     }
+    //another error
     else if (pid < 0) {
         perror("lsh");
     }
@@ -120,3 +125,59 @@ int lsh_launch(char **args){
     }
     return 1;
 }
+//need to declare here 
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+
+//holds the built in functions
+char *builtin_str[] = {
+    "cd",
+    "help",
+    "exit"
+};
+//so that we can use them here
+int (*builtin_func[]) (char **) = {
+    &lsh_cd,
+    &lsh_help,
+    &lsh_exit
+};
+
+// returns the number of built in functions by doing math on 
+// the size of the struct and the size of a char
+int lsh_num_builtins(){
+    return sizeof(builtin_str) / sizeof(char *);
+}
+
+//function for changing directory
+int lsh_cd(char **args){
+    //no argument given, returns an error
+    if (args[1] == NULL) {
+        fprintf(stderr, "ish: expected argument to \"cd\"\n");
+    }
+    // if there is an argument, calls chdir()
+    else {
+        // if there is an error, returns an error
+        if (chdir(args[1] != 0)){
+            perror("lsh");
+        }
+    }
+    return 1;
+}
+//prints the built in functions by using the struct from earlier
+int lsh_help(char **args){
+    int i;
+    printf("An LSH from Brennan\n");
+    printf("Type program names and arguments, and hit enter.\n");
+    printf("The following are built in:\n");
+
+    for (i = 0; i < lsh_num_builtins(); i++){
+        printf(" %s\n", builtin_str[i]);
+    }
+
+}
+//exiting the shell
+int lsh_exit(char **args){
+    return 0;
+}
+
